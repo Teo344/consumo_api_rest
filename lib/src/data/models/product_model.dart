@@ -8,7 +8,7 @@ factory ProductModel.fromJson(Map<String, dynamic> json) {
   return ProductModel(
     id: json['_id']?.toString() ?? "",
     nombre: json['nombre'] ?? "",
-    price: (json['price'] ?? 0).toDouble(),
+    price: (json['precio'] ?? 0).toDouble(),
     stock: json['stock'] ?? 0,
     categoria: json['categoria'] ?? "",
   );

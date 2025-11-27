@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ProductApiDatasource implements BaseDatasource{
   //url
-  final String baseUrl = 'http://172.20.10.2:3000/api/productos';
+  final String baseUrl = 'http://10.40.14.2:3000/api/productos';
 
   @override
   Future<List<ProductModel>> fetchProductos() async {

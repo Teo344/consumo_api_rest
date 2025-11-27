@@ -58,24 +58,64 @@ class HomePage extends StatelessWidget {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                TextField(controller: _nombreController, decoration: const InputDecoration(labelText: "Nombre")),
-                TextField(controller: _priceController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Precio")),
-                TextField(controller: _stockController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Stock")),
-                TextField(controller: _categoriaController, decoration: const InputDecoration(labelText: "Categoría")),
+                TextField(
+                  controller: _nombreController,
+                  decoration: const InputDecoration(labelText: "Nombre"),
+                ),
+                TextField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Precio"),
+                ),
+                TextField(
+                  controller: _stockController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Stock"),
+                ),
+                TextField(
+                  controller: _categoriaController,
+                  decoration: const InputDecoration(labelText: "Categoría"),
+                ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text("Cancelar")),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Cancelar"),
+            ),
             ElevatedButton(
               onPressed: () async {
+                final nombre = _nombreController.text.trim();
+                final precio = double.tryParse(_priceController.text);
+                final stock = int.tryParse(_stockController.text);
+                final categoria = _categoriaController.text.trim();
+
+                // Validaciones
+                if (nombre.isEmpty ||
+                    precio == null ||
+                    precio <= 0 ||
+                    stock == null ||
+                    stock < 0 ||
+                    categoria.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Por favor, completa todos los campos correctamente. Precio > 0, Stock >= 0.",
+                      ),
+                    ),
+                  );
+                  return;
+                }
+
                 final nuevoProducto = ProductEntity(
                   id: '',
-                  nombre: _nombreController.text.trim(),
-                  price: double.tryParse(_priceController.text) ?? 0,
-                  stock: int.tryParse(_stockController.text) ?? 0,
-                  categoria: _categoriaController.text.trim(),
+                  nombre: nombre,
+                  price: precio,
+                  stock: stock,
+                  categoria: categoria,
                 );
+
                 await vm.agregarProductos(nuevoProducto);
                 Navigator.of(ctx).pop();
               },
@@ -87,7 +127,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _mostrarModalEditar(BuildContext context, ProductViewmodel vm, ProductEntity p) {
+  void _mostrarModalEditar(
+    BuildContext context,
+    ProductViewmodel vm,
+    ProductEntity p,
+  ) {
     final _nombreController = TextEditingController(text: p.nombre);
     final _priceController = TextEditingController(text: p.price.toString());
     final _stockController = TextEditingController(text: p.stock.toString());
@@ -101,24 +145,63 @@ class HomePage extends StatelessWidget {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                TextField(controller: _nombreController, decoration: const InputDecoration(labelText: "Nombre")),
-                TextField(controller: _priceController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Precio")),
-                TextField(controller: _stockController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Stock")),
-                TextField(controller: _categoriaController, decoration: const InputDecoration(labelText: "Categoría")),
+                TextField(
+                  controller: _nombreController,
+                  decoration: const InputDecoration(labelText: "Nombre"),
+                ),
+                TextField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Precio"),
+                ),
+                TextField(
+                  controller: _stockController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Stock"),
+                ),
+                TextField(
+                  controller: _categoriaController,
+                  decoration: const InputDecoration(labelText: "Categoría"),
+                ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text("Cancelar")),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Cancelar"),
+            ),
             ElevatedButton(
               onPressed: () async {
+                final nombre = _nombreController.text.trim();
+                final precio = double.tryParse(_priceController.text);
+                final stock = int.tryParse(_stockController.text);
+                final categoria = _categoriaController.text.trim();
+
+                if (nombre.isEmpty ||
+                    precio == null ||
+                    precio <= 0 ||
+                    stock == null ||
+                    stock < 0 ||
+                    categoria.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Por favor, completa todos los campos correctamente. Precio > 0, Stock >= 0.",
+                      ),
+                    ),
+                  );
+                  return;
+                }
+
                 final actualizado = ProductEntity(
                   id: p.id,
-                  nombre: _nombreController.text.trim(),
-                  price: double.tryParse(_priceController.text) ?? 0,
-                  stock: int.tryParse(_stockController.text) ?? 0,
-                  categoria: _categoriaController.text.trim(),
+                  nombre: nombre,
+                  price: precio,
+                  stock: stock,
+                  categoria: categoria,
                 );
+
                 await vm.editarProductos(p.id, actualizado);
                 Navigator.of(ctx).pop();
               },
@@ -130,14 +213,21 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _confirmarEliminar(BuildContext context, ProductViewmodel vm, ProductEntity p) {
+  void _confirmarEliminar(
+    BuildContext context,
+    ProductViewmodel vm,
+    ProductEntity p,
+  ) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text("Confirmar eliminación"),
         content: Text("¿Deseas eliminar '${p.nombre}'?"),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text("Cancelar")),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("Cancelar"),
+          ),
           ElevatedButton(
             onPressed: () async {
               await vm.eliminarProductos(p.id);
